@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    main {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin: 10px;
+      width: 300px;
+      text-align: center;
+    }
+    .card button {
+      background-color: #007bff;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .logout {
+      margin-top: 20px;
+      background-color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Selamat Datang di Dashboard</h1>
+  </header>
+
+  <main>
+    <div class="card">
+      <h3>Profil Saya</h3>
+      <p>Lihat dan edit informasi profil.</p>
+      <button onclick="window.location.href='profile.html'">Lihat Profil</button>
+    </div>
+
+    <div class="card">
+      <h3>Diagram Keluarga</h3>
+      <p>Lihat dan kelola silsilah keluarga.</p>
+      <button onclick="window.location.href='diagram.html'">Lihat Diagram</button>
+    </div>
+
+    <button class="logout" onclick="logout()">Logout</button>
+  </main>
+
+  <script>
+    const currentEmail = localStorage.getItem("currentUser");
+    if (!currentEmail) {
+      alert("Silakan login terlebih dahulu.");
+      window.location.href = "login.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>

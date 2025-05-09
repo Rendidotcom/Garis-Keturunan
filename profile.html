@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profil Pengguna</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f3f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .profil-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    .profil-container h2 {
+      margin-bottom: 20px;
+    }
+    .profil-container img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border: 2px solid #007bff;
+    }
+    .profil-container input[type="text"],
+    .profil-container input[type="email"],
+    .profil-container input[type="password"] {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .profil-container input[type="file"] {
+      margin-bottom: 15px;
+    }
+    .profil-container button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .profil-container .save {
+      background-color: #007bff;
+      color: white;
+    }
+    .profil-container .logout {
+      background-color: #6c757d;
+      color: white;
+    }
+    .profil-container .dashboard {
+      background-color: #28a745;
+      color: white;
+    }
+    .profil-container .edit-section {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="profil-container">
+    <h2>Profil Saya</h2>
+    <p><strong>ID:</strong> <span id="user-id"></span></p>
+    <p><strong>Username:</strong> <span id="username"></span></p>
+    <img id="foto-profil" src="default.png" alt="Foto Profil">
+    <br>
+    <input type="file" id="foto-input" accept="image/*" />
+    <input type="text" id="nama-lengkap" placeholder="Nama Lengkap" />
+
+    <button id="simpan-profil" class="save">Simpan Profil</button>
+    <button id="logout" class="logout">Logout</button>
+    <button class="dashboard" onclick="window.location.href='index.html'">Kembali ke Dashboard</button>
+
+    <div class="edit-section">
+      <h4>Edit Info Akun</h4>
+      <input type="email" id="editEmail" placeholder="Email Baru" />
+      <input type="password" id="editPassword" placeholder="Password Baru" />
+      <button class="save" onclick="ubahAkun()">Simpan Perubahan</button>
+    </div>
+  </div>
+
+  <script>
+    const currentEmail = localStorage.getItem("currentUser");
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const currentUser = users.find(u => u.email === currentEmail);
+
+    if (!currentUser) {
+      alert("Belum login! Kembali ke login.");
+      window.location.href = "login.html";
+    }
+
+    const idEl = document.getElementById("user-id");
+    const usernameEl = document.getElementById("username");
+    const namaInput = document.getElementById("nama-lengkap");
+    const fotoEl = document.getElementById("foto-profil");
+    const fotoInput = document.getElementById("foto-input");
+
+    function renderProfil() {
+      idEl.textContent = currentUser.id;
+      usernameEl.textContent = currentUser.namaLengkap;
+      namaInput.value = currentUser.namaLengkap || "";
+      fotoEl.src = currentUser.foto || "default.png";
+    }
+
+    renderProfil();
+
+    document.getElementById("simpan-profil").addEventListener("click", () => {
+      currentUser.namaLengkap = namaInput.value;
+      const reader = new FileReader();
+      const file = fotoInput.files[0];
+
+      if (file) {
+        reader.onloadend = () => {
+          currentUser.foto = reader.result;
+          fotoEl.src = currentUser.foto;
+          updateUserData();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        updateUserData();
+      }
+    });
+
+    function updateUserData() {
+      const idx = users.findIndex(u => u.email === currentUser.email);
+      if (idx !== -1) {
+        users[idx] = currentUser;
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Profil disimpan!");
+        renderProfil();
+      }
+    }
+
+    document.getElementById("logout").addEventListener("click", () => {
+      localStorage.removeItem("currentUser");
+      window.location.href = "login.html";
+    });
+
+    function ubahAkun() {
+      const newEmail = (document.getElementById("editEmail")).value.trim();
+      const newPassword = (document.getElementById("editPassword")).value.trim();
+
+      if (newEmail) {
+        currentUser.email = newEmail;
+        localStorage.setItem("currentUser", newEmail);
+      }
+
+      if (newPassword) {
+        currentUser.password = newPassword;
+      }
+
+      updateUserData();
+    }
+  </script>
+  <script src="https://balkangraph.com/js/OrgChart.js"></script>
+</body>
+</html>
